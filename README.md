@@ -29,7 +29,7 @@ Dataset:	PIMA Indian Diabetes Dataset<br><hr>
 # 🚀 How to Run the Project
 
 1️⃣ Clone the Repository:<br>
-git clone https://github.com/vikassaini2478/Diabetes-Prediction.git<br>
+git clone https://github.com/Vikassaini2478/Diabetes-Prediction.git<br>
 cd diabetes-prediction<br>
 
 2️⃣ Install Dependencies:<br>

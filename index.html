@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diabetes Predector</title>
+  <link rel="website icon" type="jpp" href="icon.jpg">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121833;
+      --accent: #6ee7ff;
+      --accent2: #a78bfa;
+      --text: #e6e9f2;
+      --muted: #9aa3b2;
+      --danger: #ff6b6b;
+      --ok: #34d399;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1200px 600px at 10% -10%, #172046 0%, var(--bg) 60%), var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 28px 22px 8px; text-align: center;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--accent);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .container { max-width: 1080px; margin: 0 auto; padding: 20px; }
+
+    .grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 22px; }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+    .card { background: linear-gradient(180deg, rgba(167,139,250,0.08), rgba(110,231,255,0.06));
+      backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+
+    h1 { font-size: 28px; margin: 12px 0 6px; letter-spacing: .3px; }
+    p.muted { color: var(--muted); margin: 6px 0 0; }
+
+    form { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    @media (max-width: 720px) { form { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 13px; color: var(--muted); }
+    input[type="number"] {
+      width: 100%; padding: 12px 12px; border-radius: 12px; background: #0f1530; color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    input[type="number"]:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(110,231,255,.15); }
+
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    button {
+      appearance: none; border: none; border-radius: 12px; padding: 12px 16px; font-weight: 600; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #0c1022; box-shadow: var(--shadow);
+    }
+    button.secondary { background: transparent; color: var(--text); border: 1px solid rgba(255,255,255,0.14); }
+
+    .result { display: grid; gap: 14px; }
+    .status {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px; border-radius: 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .status .pill { font-weight: 700; padding: 8px 12px; border-radius: 999px; }
+
+    .meter-wrap { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 14px; }
+    .meter-label { display: flex; align-items: center; justify-content: space-between; font-size: 14px; color: var(--muted); }
+    .meter { height: 14px; width: 100%; background: #0f1530; border-radius: 999px; overflow: hidden; margin-top: 10px; }
+    .meter > div { height: 100%; width: 0%; transition: width .4s ease; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+
+    .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+    .footnote { color: var(--muted); font-size: 12px; }
+    .error { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">🚑 Diabetes Predection Project </div>
+    <h1>Diabetes Risk Prediction</h1>
+    <p class="muted"><b><l>Enter Patient Details</b>,<i><b> and get a probability + decision.</b></i></l> </p>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <section class="card">
+        <h2 style="margin-top:0">Input</h2>
+        <form id="form">
+          <!-- Fields should match the model feature names exactly -->
+          <div class="field"><label>Pregnancies</label><input type="number" step="1" min="0" id="Pregnancies" required></div>
+          <div class="field"><label>Glucose</label><input type="number" step="0.1" min="0" id="Glucose" required></div>
+          <div class="field"><label>BloodPressure</label><input type="number" step="1" min="0" id="BloodPressure" required></div>
+          <div class="field"><label>SkinThickness</label><input type="number" step="0.1" min="0" id="SkinThickness"></div>
+          <div class="field"><label>Insulin</label><input type="number" step="0.1" min="0" id="Insulin"></div>
+          <div class="field"><label>BMI</label><input type="number" step="0.1" min="0" id="BMI" required></div>
+          <div class="field"><label>DiabetesPedigreeFunction</label><input type="number" step="0.001" min="0" id="DiabetesPedigreeFunction" required></div>
+          <div class="field"><label>Age</label><input type="number" step="1" min="0" id="Age" required></div>
+        </form>
+        <div class="actions">
+          <button id="predictBtn">Predict</button>
+          <button class="secondary" id="clearBtn" type="button">Clear</button>
+        </div>
+        <h5 class="footnote"> <b><i><l>Powered By Vikas Saini</l></i></b></h5>
+        <p id="error" class="error"></p>
+      </section>
+
+      <aside class="card result">
+        <h2 style="margin-top:0">Result</h2>
+        <div class="status">
+          <div>
+            <div class="muted">Decision</div>
+            <div id="decision" style="font-size:22px; font-weight:800">—</div>
+          </div>
+          <div class="pill" id="pill" style="background:#0f1530; border:1px solid rgba(255,255,255,0.12);">waiting</div>
+        </div>
+
+        <div class="meter-wrap">
+          <div class="meter-label">
+            <span>Predicted probability of diabetes</span>
+            <span id="probaLabel">0.00</span>
+          </div>
+          <div class="meter"><div id="meterBar"></div></div>
+        </div>
+
+        <div class="row">
+          <label class="muted">Threshold</label>
+          <input id="threshold" type="range" min="0" max="1" step="0.01" value="0.50" style="flex:1"/>
+          <div style="width:52px; text-align:right" id="thVal">0.50</div>
+        </div>
+
+        <div class="footnote">Model: RandomForest (served by your trained pipeline) • Endpoint: <code>/predict</code></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const predictBtn = document.getElementById('predictBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const errorEl = document.getElementById('error');
+
+    const meterBar = document.getElementById('meterBar');
+    const probaLabel = document.getElementById('probaLabel');
+    const decisionEl = document.getElementById('decision');
+    const pill = document.getElementById('pill');
+
+    const threshold = document.getElementById('threshold');
+    const thVal = document.getElementById('thVal');
+
+    let lastProba = 0;
+
+    function collectPayload() {
+      const get = id => document.getElementById(id).value;
+      // Build JSON matching the Flask API's expected keys
+      return {
+        Pregnancies: toNumber(get('Pregnancies')),
+        Glucose: toNumber(get('Glucose')),
+        BloodPressure: toNumber(get('BloodPressure')),
+        SkinThickness: toNumber(get('SkinThickness')),
+        Insulin: toNumber(get('Insulin')),
+        BMI: toNumber(get('BMI')),
+        DiabetesPedigreeFunction: toNumber(get('DiabetesPedigreeFunction')),
+        Age: toNumber(get('Age')),
+      };
+    }
+
+    function toNumber(v){
+      if(v === '' || v === null || typeof v === 'undefined') return null;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function render(proba){
+      lastProba = proba;
+      const thr = Number(threshold.value);
+      thVal.textContent = thr.toFixed(2);
+      probaLabel.textContent = proba.toFixed(2);
+      meterBar.style.width = Math.round(proba*100) + '%';
+
+      const pred = proba >= thr ? 1 : 0;
+      decisionEl.textContent = pred ? 'Positive (at risk)' : 'Negative (low risk)';
+      pill.textContent = pred ? 'at risk' : 'low risk';
+      pill.style.background = pred ? 'rgba(52,211,153,0.15)' : '#0f1530';
+      pill.style.borderColor = pred ? 'rgba(52,211,153,0.35)' : 'rgba(255,255,255,0.12)';
+      pill.style.color = pred ? '#34d399' : '#e6e9f2';
+    }
+
+    threshold.addEventListener('input', () => render(lastProba));
+
+    clearBtn.addEventListener('click', () => {
+      form.reset();
+      render(0);
+      errorEl.textContent = '';
+    });
+
+    async function predict(){
+      errorEl.textContent = '';
+      pill.textContent = 'scoring…';
+
+      const payload = collectPayload();
+
+      try {
+        const res = await fetch('/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if(!res.ok){
+          const err = await res.json().catch(()=>({error: res.statusText}));
+          throw new Error(err.error || 'Request failed');
+        }
+
+        const data = await res.json();
+        // API returns { probability_diabetes: float, prediction: 0/1, threshold: 0.5 }
+        const p = Number(data.probability_diabetes || 0);
+        render(p);
+      } catch(e){
+        errorEl.textContent = 'Error: ' + e.message + ' (Is your backend running and serving this file from the same origin?)';
+        pill.textContent = 'error';
+      }
+    }
+
+    predictBtn.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      predict();
+    });
+
+    // Initial
+    render(0);
+  </script>
+</body>
+</html>
